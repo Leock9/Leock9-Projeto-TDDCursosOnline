@@ -1,6 +1,9 @@
 ﻿using Bogus;
 using CursosOnline.Domain.Curso;
-using CursosOnline.Domain.Curso.Enum;
+using CursosOnline.Domain.Curso.DTOs;
+using CursosOnline.Domain.Curso.Interfaces;
+using CursosOnline.Domain.Curso.Services;
+using CursosOnline.DomainTest._Builders;
 using CursosOnline.DomainTest._Util;
 using Moq;
 using System;
@@ -10,7 +13,7 @@ namespace CursosOnline.DomainTest.Cursos
 {
     public class ArmazenadorDeCursoTest
     {
-        private readonly CursoDto _cursoDto;
+        private readonly CursoDTO _cursoDTO;
         private readonly ArmazenadorDeCurso _armazenadorDeCurso;
         private readonly Mock<ICursoRepository> _cursoRepositoryMock;
 
@@ -18,7 +21,7 @@ namespace CursosOnline.DomainTest.Cursos
         {
             var dadosAleatorios = new Faker();
 
-            _cursoDto = new CursoDto
+            _cursoDTO = new CursoDTO
             {
                 Nome = dadosAleatorios.Name.Random.String(),
                 Descricao = dadosAleatorios.Lorem.Paragraph(),
@@ -35,11 +38,11 @@ namespace CursosOnline.DomainTest.Cursos
         [Fact]
         public void DeveAdicionarCurso()
         {
-            _armazenadorDeCurso.Armazenar(_cursoDto);
+            _armazenadorDeCurso.Armazenar(_cursoDTO);
 
             _cursoRepositoryMock.Verify(armazenador => armazenador.Adicionar
             (
-                It.Is<Curso>(curso => curso.Nome.Equals(_cursoDto.Nome) && curso.Descricao.Equals(_cursoDto.Descricao))
+                It.Is<Curso>(curso => curso.Nome.Equals(_cursoDTO.Nome) && curso.Descricao.Equals(_cursoDTO.Descricao))
              ));
         }
 
@@ -49,55 +52,25 @@ namespace CursosOnline.DomainTest.Cursos
         [InlineData("Publicitario")]
         public void NaoDeveInformarPublicoAlvoInvalido(string publicAlvoInvalido) 
         {
-            _cursoDto.PublicoAlvo = publicAlvoInvalido;
+            _cursoDTO.PublicoAlvo = publicAlvoInvalido;
 
-            Assert.Throws<ArgumentException>(() => _armazenadorDeCurso.Armazenar(_cursoDto))
+            Assert.Throws<ArgumentException>(() => _armazenadorDeCurso.Armazenar(_cursoDTO))
                 .ValidarMensagem("Publico Alvo invalido");
         }
-    }
 
-    public interface ICursoRepository
-    {
-        void Adicionar(Curso curso);
-    }
-
-    public class ArmazenadorDeCurso
-    {
-        private readonly ICursoRepository _cursoRepository;
-
-        public ArmazenadorDeCurso(ICursoRepository cursoRepository)
+        [Fact]
+        public void NaoDeveAdicionarCursoComMesmoNome()
         {
-            _cursoRepository = cursoRepository;
-        }
+            var cursoJaSalvo = CursoBuilder.Novo().ComNome(_cursoDTO.Nome).Build();
 
-        public void Armazenar(CursoDto cursoDto)
-        {
+            _cursoRepositoryMock.Setup(dados => dados.Obter(_cursoDTO.Nome)).Returns(cursoJaSalvo);
 
-            Enum.TryParse(typeof(PublicoAlvo), cursoDto.PublicoAlvo, out var publicoAlvo);
-
-            if (publicoAlvo == null)
-                throw new ArgumentException("Publico Alvo invalido");
-
-            var curso = new Curso
-                (
-                    cursoDto.Nome,
-                    cursoDto.CargaHorario,
-                    (PublicoAlvo)publicoAlvo,
-                    cursoDto.Valor,
-                    cursoDto.Descricao
-                 ); ;
-
-            _cursoRepository.Adicionar(curso);
+            Assert.Throws<ArgumentException>(() => _armazenadorDeCurso.Armazenar(_cursoDTO))
+           .ValidarMensagem("Nome do curso ja consta no banco de dados");
         }
     }
 
-    public class CursoDto
-    {
-        public string Nome { get; set; }
-        public string Descricao { get; set; }
-        public double CargaHorario { get; set; }
-        public string PublicoAlvo { get; set; }
-        public double Valor { get; set; }
-    }
+
+
 }
 

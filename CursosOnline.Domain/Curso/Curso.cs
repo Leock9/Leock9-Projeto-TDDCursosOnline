@@ -1,4 +1,4 @@
-﻿using CursosOnline.Domain.Curso.Enum;
+﻿using CursosOnline.Domain.Curso.Enums;
 using System;
 
 namespace CursosOnline.Domain.Curso

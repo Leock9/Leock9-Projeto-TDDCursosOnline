@@ -1,4 +1,4 @@
-﻿namespace CursosOnline.Domain.Curso.Enum
+﻿namespace CursosOnline.Domain.Curso.Enums
 {
     public enum PublicoAlvo
     {

@@ -1,5 +1,5 @@
 ﻿using CursosOnline.Domain.Curso;
-using CursosOnline.Domain.Curso.Enum;
+using CursosOnline.Domain.Curso.Enums;
 
 namespace CursosOnline.DomainTest._Builders
 {

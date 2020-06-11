@@ -1,6 +1,6 @@
 ﻿using Bogus;
 using CursosOnline.Domain.Curso;
-using CursosOnline.Domain.Curso.Enum;
+using CursosOnline.Domain.Curso.Enums;
 using CursosOnline.DomainTest._Builders;
 using CursosOnline.DomainTest._Util;
 using ExpectedObjects;
