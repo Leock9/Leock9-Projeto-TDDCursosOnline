@@ -2,6 +2,7 @@
 using CursosOnline.Domain.Curso;
 using CursosOnline.Domain.Curso.DTOs;
 using CursosOnline.Domain.Curso.Interfaces;
+using CursosOnline.Domain.Curso.Resources;
 using CursosOnline.Domain.Curso.Services;
 using CursosOnline.DomainTest._Builders;
 using CursosOnline.DomainTest._Util;
@@ -55,7 +56,7 @@ namespace CursosOnline.DomainTest.Cursos
             _cursoDTO.PublicoAlvo = publicAlvoInvalido;
 
             Assert.Throws<ArgumentException>(() => _armazenadorDeCurso.Armazenar(_cursoDTO))
-                .ValidarMensagem("Publico Alvo invalido");
+                .ValidarMensagem(CursoResource.PublicoAlvoInvalido);
         }
 
         [Fact]
@@ -66,7 +67,7 @@ namespace CursosOnline.DomainTest.Cursos
             _cursoRepositoryMock.Setup(dados => dados.Obter(_cursoDTO.Nome)).Returns(cursoJaSalvo);
 
             Assert.Throws<ArgumentException>(() => _armazenadorDeCurso.Armazenar(_cursoDTO))
-           .ValidarMensagem("Nome do curso ja consta no banco de dados");
+           .ValidarMensagem(CursoResource.NomeCursoDuplicado);
         }
     }
 

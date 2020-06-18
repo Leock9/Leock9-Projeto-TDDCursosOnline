@@ -1,28 +1,25 @@
 ﻿using Bogus;
 using CursosOnline.Domain.Curso;
 using CursosOnline.Domain.Curso.Enums;
+using CursosOnline.Domain.Curso.Resources;
 using CursosOnline.DomainTest._Builders;
 using CursosOnline.DomainTest._Util;
 using ExpectedObjects;
 using System;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace CursosOnline.DomainTest.Cursos
 {
-    public class CursoTest : IDisposable
+    public class CursoTest
     {
-        private readonly ITestOutputHelper _testOutputHelper;
         private readonly string _nome;
         private readonly double _cargaHoraria;
         private readonly PublicoAlvo _publicoAlvo;
         private readonly double _valor;
         private readonly string _descricao;
 
-        public CursoTest(ITestOutputHelper testOutputHelper)
+        public CursoTest()
         {
-            _testOutputHelper = testOutputHelper;
-            _testOutputHelper.WriteLine("Contrutor sendo executado");
             var dadosAleatorios = new Faker();
 
             _nome = dadosAleatorios.Name.Random.String();
@@ -30,11 +27,6 @@ namespace CursosOnline.DomainTest.Cursos
             _publicoAlvo = PublicoAlvo.Estudante;
             _valor = dadosAleatorios.Finance.Random.Double();
             _descricao = dadosAleatorios.Lorem.Paragraph();
-        }
-
-        public void Dispose()
-        {
-            _testOutputHelper.WriteLine("Dispose sendo executado");
         }
 
         [Fact]
@@ -65,7 +57,21 @@ namespace CursosOnline.DomainTest.Cursos
             .Novo()
             .ComNome(nomeInvalido)
             .Build()
-            ).ValidarMensagem("Nome invalido");
+            ).ValidarMensagem(CursoResource.NomeInvalido);
+        }
+
+        [Theory]
+        [InlineData("")]
+        [InlineData(null)]
+        public void CursoNaoDeveTerDescricaoEmBranco(string descricaoInvalida)
+        {
+
+            Assert.Throws<ArgumentException>(() =>
+            CursoBuilder
+            .Novo()
+            .ComDescricao(descricaoInvalida)
+            .Build()
+            ).ValidarMensagem(CursoResource.DescricaoInvalida);
         }
 
         [Theory]
@@ -78,7 +84,7 @@ namespace CursosOnline.DomainTest.Cursos
             .Novo()
             .ComCargaHoraria(cargaHorariaInvalida)
             .Build()
-            ).ValidarMensagem("Carga horária não pode ser menor que 0 horas");
+            ).ValidarMensagem(CursoResource.CargaHorariaInvalida);
 
         }
 
@@ -92,7 +98,7 @@ namespace CursosOnline.DomainTest.Cursos
             .Novo()
             .ComValor(valorInvalido)
             .Build()
-            ).ValidarMensagem("O valor do curso não pode ser menor que 0 reais");
+            ).ValidarMensagem(CursoResource.ValorCursoInvalido);
         }
     }
 }

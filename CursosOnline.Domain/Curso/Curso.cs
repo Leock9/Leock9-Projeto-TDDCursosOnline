@@ -1,4 +1,5 @@
 ﻿using CursosOnline.Domain.Curso.Enums;
+using CursosOnline.Domain.Curso.Resources;
 using System;
 
 namespace CursosOnline.Domain.Curso
@@ -28,25 +29,25 @@ namespace CursosOnline.Domain.Curso
         public void ValidarNome(string nome)
         {
             if (nome == string.Empty || nome == null)
-                throw new ArgumentException("Nome invalido");
+                throw new ArgumentException(CursoResource.NomeInvalido);
         }
 
         public void ValidarCargaHoraria(double cargaHoraria)
         {
             if (cargaHoraria <= 0)
-                throw new ArgumentException("Carga horária não pode ser menor que 0 horas");
+                throw new ArgumentException(CursoResource.CargaHorariaInvalida);
         }
 
         public void ValidarValor(double valor)
         {
             if (valor <= 0)
-                throw new ArgumentException("O valor do curso não pode ser menor que 0 reais");
+                throw new ArgumentException(CursoResource.ValorCursoInvalido);
         }
 
         public void ValidarDescricao(string descricao)
         {
             if (descricao == string.Empty || descricao == null)
-                throw new ArgumentException("A descrição não pode estar em branco");
+                throw new ArgumentException(CursoResource.DescricaoInvalida);
         }
     }
 }
